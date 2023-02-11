@@ -218,6 +218,7 @@ function textHasProblems(text)
 
 function uploadDirect(n, procfunc, getPopulation, lvparam, mhcload)
 {
+    if (processing) return;
     if (directInput.value.length < 9 && mhcload == 1)
     {
         alert("Sequence must be at least length 9 for Class I MHC design.");
