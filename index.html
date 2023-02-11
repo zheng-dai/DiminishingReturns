@@ -40,30 +40,49 @@
             text-align: center;
             transform: rotate(180deg)
         }
-        .container {
-        display: grid;
-        overflow: hidden;
-        /*grid-template-columns: repeat(5, 1fr);*/
-        grid-template-columns: repeat(5, 20vw);
-        grid-template-rows: max-content max-content max-content max-content max-content max-content;
-        /*grid-column-gap: 10px;*/
-        /*grid-template-rows: 2fr max-content max-content max-content max-content 1fr;*/
-        /*grid-row-gap: 10px;*/
-        grid-template-areas: 
-            "a a a a a"
-            ". b b b ."
-            "c d e e f"
-            "c d e e g"
-            "c i e e g"
-            "j j j j j";
-        /*TODO: background gets cut off*/
-        /*background-color: rgba(240, 240, 240, 0.8);*/
-        min-width: 100vw;
-        min-height: 100vh;
-        width: max-content;
-        height: max-content;
-        transition: grid-template-rows 0.5s;
-        transition-timing-function: ease-out;
+        @media (orientation: landscape) {
+            .container {
+                display: grid;
+                overflow: hidden;
+                grid-template-columns: repeat(5, 20vw);
+                grid-template-rows: max-content max-content max-content max-content max-content max-content;
+                grid-template-areas: 
+                    "a a a a a"
+                    ". b b b ."
+                    "c d e e f"
+                    "c d e e g"
+                    "c i e e g"
+                    "j j j j j";
+                min-width: 100vw;
+                min-height: 100vh;
+                width: max-content;
+                height: max-content;
+                transition: grid-template-rows 0.5s;
+                transition-timing-function: ease-out;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .container {
+                display: grid;
+                overflow: hidden;
+                grid-template-columns: repeat(4, 25vw);
+                grid-template-rows: max-content max-content max-content max-content max-content max-content;
+                grid-template-areas: 
+                    "a a a a"
+                    "b b b b"
+                    "c c d d "
+                    "c c i i"
+                    "e e e e"
+                    "f f g g"
+                    "j j j j";
+                min-width: 100vw;
+                min-height: 100vh;
+                width: max-content;
+                height: max-content;
+                transition: grid-template-rows 0.5s;
+                transition-timing-function: ease-out;
+            }
         }
         .container2 {        
             grid-template-rows: 2fr max-content 10px 10px 10px 1fr;
@@ -102,20 +121,41 @@
                 "c a";
         }
 
-        .item-header {
-            min-height: 100vh;
-            grid-area: a;
-            background-color: rgb(48,48,48);
-            display: grid;
-            grid-template-areas: 
-                "a a a a a"
-                ". b b b ."
-                ". c d e ."
-                ". g d e ."
-                "f f f f f";
-            grid-template-columns: 1fr 4fr 4fr 4fr 1fr;
-            grid-template-rows: max-content max-content max-content;
-            color: white;
+        @media (orientation: landscape) {
+            .item-header {
+                min-height: 100vh;
+                grid-area: a;
+                background-color: rgb(48,48,48);
+                display: grid;
+                grid-template-areas: 
+                    "a a a a a"
+                    ". b b b ."
+                    ". c d e ."
+                    ". g d e ."
+                    "f f f f f";
+                grid-template-columns: 1fr 4fr 4fr 4fr 1fr;
+                grid-template-rows: max-content max-content max-content;
+                color: white;
+            }
+        }
+        @media (orientation: portrait) {
+            .item-header {
+                min-height: 100vh;
+                grid-area: a;
+                background-color: rgb(48,48,48);
+                display: grid;
+                grid-template-areas: 
+                    "a a a a a"
+                    ". b b b ."
+                    ". c c c ."
+                    ". g g g ."
+                    ". d d d ."
+                    ". e e e ."
+                    "f f f f f";
+                grid-template-columns: 1fr 4fr 4fr 4fr 1fr;
+                grid-template-rows: max-content max-content max-content;
+                color: white;
+            }
         }
         .item-headerheader {
             grid-area: a;
