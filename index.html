@@ -1,1 +1,541 @@
-<meta http-equiv="refresh" content="0; URL='https://github.com/gifford-lab/DiminishingReturns'" />
+<!DOCTYPE html>
+<html>
+    <!--You should never code like this-->
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+    <title>Constrained Submodular Optimization for Vaccine Design</title>
+    <style>
+        .graph {
+            display: grid;
+            grid-template-areas: 
+            "y f"
+            ". x";
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 0.8em;
+        }
+        .graphx2 {
+            grid-area: x;
+            text-align: center;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 0.8em;
+        }
+        .graphx {
+            grid-area: x;
+            text-align: center;
+        }
+        .graphy {
+            grid-area: y;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: flex-end;
+            flex-wrap: wrap;
+            margin-right: 20px;
+        }
+        .graphf {
+            grid-area: f;
+        }
+        .ylabel {
+            writing-mode: vertical-rl;
+            text-align: center;
+            transform: rotate(180deg)
+        }
+        .container {
+        display: grid;
+        overflow: hidden;
+        /*grid-template-columns: repeat(5, 1fr);*/
+        grid-template-columns: repeat(5, 20vw);
+        grid-template-rows: max-content max-content max-content max-content max-content max-content;
+        /*grid-column-gap: 10px;*/
+        /*grid-template-rows: 2fr max-content max-content max-content max-content 1fr;*/
+        /*grid-row-gap: 10px;*/
+        grid-template-areas: 
+            "a a a a a"
+            ". b b b ."
+            "c d e e f"
+            "c d e e g"
+            "c i e e g"
+            "j j j j j";
+        /*TODO: background gets cut off*/
+        /*background-color: rgba(240, 240, 240, 0.8);*/
+        min-width: 100vw;
+        min-height: 100vh;
+        width: max-content;
+        height: max-content;
+        transition: grid-template-rows 0.5s;
+        transition-timing-function: ease-out;
+        }
+        .container2 {        
+            grid-template-rows: 2fr max-content 10px 10px 10px 1fr;
+        }
+
+        /*.container > div {
+            padding: 20px;
+        } */
+        .item-candidate {
+            grid-area: c;
+        }
+        .item-design {
+            grid-area: d;
+        }
+        .item-overview {
+            grid-area: e;
+        }
+        .item-hlaview {
+            grid-area: f;
+        }
+        .item-utility {
+            grid-area: g;
+        }
+        .item-extra {
+            grid-area: i;
+        }
+        .item-input {
+            grid-area: b;
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+            grid-template-areas:
+                "d d" 
+                "b a"
+                "c a";
+        }
+
+        .item-header {
+            min-height: 100vh;
+            grid-area: a;
+            background-color: rgb(48,48,48);
+            display: grid;
+            grid-template-areas: 
+                "a a a a a"
+                ". b b b ."
+                ". c d e ."
+                ". g d e ."
+                "f f f f f";
+            grid-template-columns: 1fr 4fr 4fr 4fr 1fr;
+            grid-template-rows: max-content max-content max-content;
+            color: white;
+        }
+        .item-headerheader {
+            grid-area: a;
+            background-color: black;
+            text-align: center;
+            padding-bottom: 5vh;
+            margin-bottom: 16px;
+            padding-top: 10vh;
+        }
+        .item-headercard {
+            color: silver;
+            background-color: black;
+            border: 1px solid rgb(20,20,20);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: -2px 2px rgba(0, 0, 0, 0.25);
+            transition: box-shadow 0.1s, background-color 0.5s, color 0.2s;
+            transition-timing-function: ease-in-out;
+        }
+        .item-headercard:hover {
+            color: white;
+            background-color: rgb(16, 16, 16);
+            box-shadow: -5px 5px rgba(0, 0, 0, 0.5);
+        }
+        .item-headercard>h3 {
+            margin-bottom: 0;
+        }
+        .item-headercard>p {
+            margin-top: 0;
+        }
+        .item-headerfooter {
+            grid-area: f;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: black;
+        }
+
+        .item-footer {
+            grid-area: j;
+            background-color: black;
+        }
+
+        .preamble {
+            font-variant: small-caps;
+            text-align: left;
+            background-color: rgb(64,64,64);
+            font-weight: bold;
+            font-size: 1em;
+            position: relative;
+            left: -20px;
+            top: -20px;
+            width: 100%;
+            padding: 20px;
+            /*width: calc(100% + 40px);*/
+            font-family: "Times New Roman", Times, serif;
+            color: white;
+        }
+
+        .fastaInput {
+            width : 100%;
+            height: 100%;
+            border: 1px solid grey;
+            border-radius: 10px;
+            position: relative;
+            left: 1%;
+        }
+        /*
+            transition: 0.1s;
+            box-shadow: 0px 0px rgba(0, 0, 0, 0);
+            position:relative;
+            left: 0px;
+            top: 0px;
+        }
+        .fastaInput:focus {
+            background-color: rgba(240, 240, 240, 0.5);
+            box-shadow: -5px 5px rgba(0, 0, 0, 0.25);
+            left: 3px;
+            top: -3px;
+        }
+        */
+
+        .divButton {
+            width : 100%;
+            height: 100%;
+            border: 2px solid grey;
+            margin: 0px;
+            border-radius: 10px;
+            transition: 0.1s;
+            position: relative;
+            left: 0;
+            top: 0;
+            box-shadow: 0px 0px rgba(0, 0, 0, 0);
+            background-color: rgb(255, 255, 255);
+            user-select: none;
+            font-size: 1em;
+            font-family: Helvetica, Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .divButton:hover {
+            border: 2px solid grey;
+            margin: 0px;
+            left: 3px;
+            top: -3px;
+            box-shadow: -3px 3px rgba(0, 0, 0, 0.25);
+            background-color: rgb(255, 255, 255);
+        }
+        .divButton:active {
+            left: -1px;
+            top: 1px;
+            box-shadow: 1px -1px rgba(0, 0, 0, 1);
+            border-right: 3px solid black;
+            border-left: 1px solid black;
+            border-top: 2px solid black;
+            border-bottom: 2px solid black;
+            margin: 0px;
+            background-color: rgb(230, 230, 230);
+        }
+
+        .card {
+            outline-offset: -1px;
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: -2px 2px rgba(0, 0, 0, 0.25);
+            margin: 10px;
+            outline: 2px solid rgb(64,64,64);
+            border-radius: 10px;
+            padding: 20px;
+            transition: left 0.5s, top 0.5s, box-shadow 0.1s, max-height 1s;
+            max-height: 4000px;
+            overflow-x: hidden;
+            position: relative;
+            left: 0;
+            top: 0;
+            transition-timing-function: ease-in-out;
+        }
+
+        .card:hover {
+            box-shadow: -5px 5px rgba(0, 0, 0, 0.5);
+            outline: 2px solid rgba(0, 0, 0, 1);
+            /* margin: 9px; */
+        }
+
+        .flexcard{
+            display: flex;
+            flex-direction: column;
+            justify-content: initial;
+        }
+
+        .scrollcanvas {
+            border: 1px solid grey;
+            border-radius: 10px;
+            width: 100%;
+            height: auto;
+            user-select: none;
+        }
+        .utilcanvas {
+            border: none;
+            width: 100%;
+            height: auto;
+            user-select: none;
+        }
+        .overviewcanvas {
+            border: none;
+            border-left: 2px solid black;
+            width: 100%;
+            height: auto;
+            user-select: none;
+        }
+
+        .scrollmenu {
+            background-color: grey;
+            overflow-y: scroll;
+        }
+        .scrollmenu > div {
+            background-color: grey;
+            margin: 0 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .customScroll::-webkit-scrollbar {
+                width: 10px;
+        }
+        .customScroll::-webkit-scrollbar-track {
+            background: #E0E0E0;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .customScroll::-webkit-scrollbar-thumb {
+            background: grey;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .customScroll::-webkit-scrollbar-thumb:hover {
+            background: black;
+        }
+
+        .offsetLeft {
+            position: relative;
+            left: -200vw;
+            max-height: 10px;
+        }
+        .offsetRight {
+            position: relative;
+            left: 200vw;
+            max-height: 10px;
+        }
+        .offsetTop {
+            position: relative;
+            top: 200vh;
+            max-height: 5px;
+        }
+
+        a:link, a:visited {
+            word-break: break-all;
+            color: inherit;
+        }
+
+        a:hover, a:active {
+            word-break: break-all;
+            color: rgb(224,224,255);
+        }
+
+        .bkg {
+            background: black;
+            position: relative;
+            top: -100%;
+            width: 300%;
+            left: -100%;
+            transition: top 0.5s;
+            transition-timing-function: ease-in-out;
+            z-index: -1;
+        }
+
+        .bkg2 {
+            top: -20%;
+        }
+
+        .truebkg {
+            background-color: rgb(64,64,64);
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -5;
+        }
+
+        .truebkg2 {
+            background-color: rgb(240,240,240);
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -5;
+            opacity: 1;
+            transition: left 0.5s, opacity 1s, width 0.5s;
+            transition-timing-function: ease-in-out;
+        }
+
+        .truebkg3 {
+            width: 10vw;
+            left: 45vw;
+            opacity: 0;
+        }
+    </style>
+</head>
+<!--<body style="margin: 0; padding: 0; overflow: overlay;" onload="initPage()">-->
+<body style="margin: 0; padding: 0;" onload="initPage()">
+    <div class="truebkg"></div>
+    <div class="truebkg2 truebkg3" id="design2"></div>
+    <div class="container" id="bigcontainer">
+        <div id="design1" class="bkg bkg2" style="grid-area: b"></div>
+
+        <div class="item-header">
+            <div class="item-headerheader" style="display: flex; flex-direction: row; align-items: center; justify-content: space-evenly;">
+                <img src="csail.svg" style="filter:invert(100%); height: 8em; opacity: 0;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <h1>Constrained Submodular Optimization for Vaccine Design</h1>
+                    <span>Zheng Dai<sup>1</sup>, David K. Gifford<sup>1</sup></span>
+                    <span><sup>1</sup>Computer Science and Artificial Intelligence Laboratory, Massachusetts Institute of Technology</span>
+                </div>
+                <img src="csail.svg" style="filter:invert(100%); height: 8em;">
+            </div>
+            <div class="item-headercard" style="grid-area: b; text-align: center;">
+                <p>We present a flexible and scalable approach to designing peptide vaccines that are effective across large populations using calibrated peptide-MHC predictions.</p>
+            </div>
+            <div class="item-headercard" style="grid-area: c;">
+                <h3>Resources</h3>
+                <p>
+                    A preprint of our work can be found at <a href="https://arxiv.org/abs/2206.08336">https://arxiv.org/abs/2206.08336</a>. Code and data to replicate our work can be found at <a href="https://github.com/gifford-lab/DiminishingReturns">https://github.com/gifford-lab/DiminishingReturns</a>.
+                </p>
+            </div>
+            <div class="item-headercard" style="grid-area: g;">
+                <h2>Introduction</h2>
+                <p>
+                    Peptide vaccines are created from small sets of small protein fragments (peptides). The utility of these peptides determine the utility of the overall vaccine. Their utility can vary greatly between individuals depending on their genetics.
+                </p>
+                <h3>Objective</h3>
+                <p>
+                    Our goal is to use machine learning approaches to predict individual responses to peptide vaccines and optimize a vaccine design that is effective across an entire population.
+                </p>
+            </div>
+            <div class="item-headercard" style="grid-area: d;">
+                <h2>Method</h2>
+                <p>
+                    We generate a pool of candidate peptides from an antigen of interest and use machine learning methodologies to predict the utility of peptide fragments among individuals in a target population based on their genotypes. The peptide utilities are then used to determine vaccine utility, which we optimize for. In our formulation, peptide utility models peptide-MHC display, while vaccine utility further models immune response by considering the benefits of dissimilar redundancy in display.
+                </p>
+            </div>
+            <div class="item-headercard" style="grid-area: e;">
+                <h2>Contributions</h2>
+                <h3>Utilities are modelled probabilistically</h3>
+                <p>
+                    We calibrate raw machine learning predictions to obtain distributions of peptide effectiveness to given individuals. This allows us to model uncertainty in our utility calculations.
+                </p>
+                <h3>Submodularity enables efficient optimization</h3>
+                <p>
+                    We stipulate that a overall vaccine’s utility to an individual is a concave function of the sum of the utilities of its constituent peptides to that individual. This ensures that expected utility of a vaccine across a population is a submodular function of the peptides that are in that vaccine and allows for efficient optimization approaches.
+                </p>
+            </div>
+            <div class="item-headerfooter", style="padding: 2vw;">
+                <div style="text-align: center;">
+                <h1>Web Application</h1>
+                </div>
+                <hr class="solid" style="width:10vw; margin-top: 0; margin-bottom: 32px;">
+                <div style="padding: 2vw; padding-top: 0;">
+                    <p>We have created a simplified implementation of our method that runs in the browser, which can be accessed below. To run, simply enter the desired sequence in the text area below and click "Make Class I MHC vaccine" or "Make Class II MHC vaccine" to design peptide vaccines. Candidate peptides will be generated and listed in order of decreasing utility, and adding the top candidate repeatedly will generate a vaccine with the performance guarantees given in our work. The utility function can also be adjusted, and it is also possible to select non-optimal peptides at each design stage. Hover over the titles of the panels for tooltips containing additional instructions.</p>
+                    <p>The web implementation provides user interactivity and control, and is accessible to anyone with a modern browser. However, to allow our algorithm to run efficiently in the browser we have made the following concessions:</p>
+                    <ul>
+                        <li>No filtering on the human proteome for self peptides is performed due to the size of the human proteome.</li>
+                        <li>Predictions of peptide-MHC interactions are made with a logistic model as opposed to a neural network.</li>
+                        <li>Only haplotypes are considered when looking at the distribution of population genotypes, as opposed to full diplotypes.</li>
+                    </ul>
+                    <p>It is therefore recommended that a more rigorous implementation like the one found in our paper (<a href="https://github.com/gifford-lab/DiminishingReturns">see our github repository</a>) be used for critical applications. However, the web implementation can still be useful in quickly producing an initial draft or as a baseline to measure other designs against.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="item-input card" style="margin-top: 32px;">
+            <div style="grid-area: d;" class="preamble" title="A target sequence must be input before the tool is accessible. Target sequence can consist of only the 20 letters of the amino acid alphabet (ACDEFGHIKLMNPQRSTVWY). Processing may take a few seconds if sequences with over a few thousand amino acids are entered.">
+                Input target antigen sequence</div>
+            <div style="grid-area: b;" class="divButton" onclick="uploadDirect(9, calcMhc1, mhc1Population, 3, 1)">Make Class I MHC vaccine</div>
+            <div style="grid-area: c;" class="divButton" onclick="uploadDirect(15, calcMhc2, mhc2Population, 5, 2)">Make Class II MHC vaccine</div>
+            <!--For testing: <div style="grid-area: c;" class="divButton" onclick="uploadDirect(15, (x)=>dummyFunc(x, 1000), ()=>mockPopulation(1000), 5, 2)">Make Class II MHC vaccine</div>-->
+            <div style="grid-area: a;">
+                <textarea id="inputSequence" class="fastaInput customScroll">ACDEFGHIKLMNPQRSTVWY</textarea>
+            </div>
+        </div>
+
+
+        <div class="item-candidate card flexcard offsetLeft" id="card1">
+            <div class="preamble" title="Select candidates for vaccine inclusion. The column on the left displays the marginal utility of adding the given candidate. The candidates are sorted by increasing marginal utility, unless the utility function is adjusted or some other sorting order is specified. Peptides with problems can be found at the end of the list and are marked in red, and further details on the problems can be found in the adjacent panel. Selecting the candidate with the highest marginal utility is recommended.">
+                Candidates</div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-bottom: 10px; gap: 10px;">
+                <div class="divButton" onclick="addToDesign()">Add to design</div>
+            </div>
+            <canvas id="candidateCanvas" width="256" height="512" class="scrollcanvas"></canvas>
+            <div style="display: flex; flex-direction: column; justify-content: space-between; margin-top: 10px; gap: 5px;">
+                <div class="divButton" onclick="sortCandidates(compareKmerScore)">Sort by scores</div>
+                <div class="divButton" onclick="sortCandidates(compareKmerAlphabet)">Sort alphabetically</div>
+            </div>
+        </div>  
+        <div class="item-design card flexcard offsetLeft" id="card2">
+            <div class="preamble" title="Design of the vaccine. Use the copy to clipboard button to copy the design to the clipboard as a comma separated string.">Design</div>
+            <div style="text-align: center; margin: 10px;">
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+            <canvas id="designCanvas" width="256" height="256" class="scrollcanvas"></canvas>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 10px; gap: 10px;">
+                <div class="divButton" onclick="clipboardDesign()", id="clipboardButton">Copy to clipboard</div>
+            </div>
+        </div>
+        <div class="item-overview card flexcard offsetRight" id="card4">
+            <div class="preamble" title="Displays the overall expected utility of the design, as well as its expected utility for each genotype. Each bar represents a genotype, and the thickness of the bar is proportional to the frequency of the genotype in the global population. Genotypes are selectable, and the scroll wheel can be used to navigate the panel.">
+                Expected utility of design
+            </div>
+            <div class="graph">
+                <div class="graphx">Expected utility</div>
+                <div class="graphy"><div class="ylabel">Genotypes</div></div>
+                <div class="graphf"><canvas id="overviewCanvas" width="512" height="512" class="overviewcanvas"></canvas></div>
+            </div>
+        </div>
+        <div class="item-hlaview card flexcard offsetRight" id="card5">
+            <div class="preamble" title="Gives the distribution of the number peptide-MHC hits in the current design for a given genotype. If a candidate is selected a preview of the updated distribution is given in a lighter color. The genotype to view can be selected from the panel on the left.">Peptide-MHC hits</div>
+            <div style="text-align: center;"><span title="Haplotype" id="hlanameplate"></span></div>
+            <canvas id="distrCanvas" width="256" height="192" class="utilcanvas"></canvas>
+            <div class="graphx2">Number of Peptide-MHC hits</div>
+        </div>
+        <div class="item-utility card flexcard offsetRight" id="card6">
+            <div class="preamble" title="Adjust the utility function that gives the utility of having a given number of peptide-MHC hits. The function can be adjusted by changing the first differences, and the function is constant for values above 15. Note that adjusting the utility can cause changes in the marginal utility of candidate peptides, so they will need to be manually sorted again.">
+                Adjust utility
+            </div>
+            <div class="graph">
+                <div class="graphx">Number of Peptide-MHC hits</div>
+                <div class="graphy"><div class="ylabel">Utility</div></div>
+                <div class="graphf"><canvas id="utilityCanvas" width="256" height="256" class="utilcanvas"></canvas></div>
+            </div>
+        </div>
+        <div class="item-extra card flexcard offsetLeft" id="card3">
+            <div class="preamble" id="infocardPlate" title="Information regarding the selected candidate."><span id="infocardSpan"></span></div>
+            <div style="text-align: left;"><span id="infocardData"></span></div>
+        </div>
+
+
+        <div class="item-footer" style="color: white; text-align: right; margin-top: 32px;">
+            <h2 style="margin-bottom: 4px; margin-left: 2vw; margin-right: 2vw; font-variant: small-caps;">Citation</h2>
+            <p style="margin-top: 0; margin-left: 2vw; margin-right: 2vw;">Please cite "Z. Dai and D. Gifford. <em>Constrained Submodular Optimization for Vaccine Design</em>. 2022. <span style="font-variant: small-caps;">doi: 10.48550/ARXIV.2206.08336. url:</span> <a href="https://arxiv.org/abs/2206.08336" style="text-decoration: none;">https://arxiv.org/abs/2206.08336</a>."</p>
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script src="loadmhcmodels.js"></script>
+    <script src="processing.js"></script>
+    <script src="scrollCanvas.js"></script>
+    <script src="utilityCanvas.js"></script>
+    <script src="hlaCanvas.js"></script>
+    <script src="distrCanvas.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
