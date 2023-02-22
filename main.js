@@ -13,6 +13,14 @@ var distrCanvasCtx = distrCanvas.getContext("2d");
 var clipboardButton = document.getElementById("clipboardButton");
 var scoreShowDesign = document.getElementById("scoreDisplay");
 
+var loadingbar = document.getElementById("loadingbar");
+function updateLoading(x)
+{
+    // x between 0 and 100
+    window.requestAnimationFrame( ()=>{loadingbar.style.width = Math.floor(x) + "%";} );
+}
+updateLoading(0);
+
 var global_levenshtein_parameter = 3;
 var init = true;
 var processing = true;
@@ -233,18 +241,27 @@ function uploadDirect(n, procfunc, getPopulation, lvparam, mhcload)
         alert("Input sequence must consist of only the 20 letters of the amino acid alphabet (only ACDEFGHIKLMNPQRSTVWY)");
         return;
     }
+    //uploadDummy();
+    //return;
 
     startProcessing();
-    startLoadMhc("mhc"+mhcload+".png", mhcload, () => {
-        clipboardButton.textContent = "Copy to clipboard";
-
-        global_levenshtein_parameter = lvparam;
-        const text = [["Input", directInput.value]];
-        const kmers = processInputs(text, n, procfunc);
-        const population = getPopulation(); // numbers, names
-        uploadInput(kmers, population)
-        endProcessing();
-    });
+    loadHumanProteome(
+        () =>
+        {
+            startLoadMhc("mhc"+mhcload+".png", mhcload,
+                () =>
+                {
+                    clipboardButton.textContent = "Copy to clipboard";
+            
+                    global_levenshtein_parameter = lvparam;
+                    const text = [["Input", directInput.value]];
+                    const kmers = processInputs(text, n, procfunc);
+                    const population = getPopulation(); // numbers, names
+                    uploadInput(kmers, population)
+                    endProcessing();
+                });
+        }
+    );
 }
 
 function uploadInput(kmers, population)
@@ -315,9 +332,63 @@ function uploadInput(kmers, population)
 
     const hlaCanvasObjects = initHLACanvas(state, overviewCanvas, overviewCanvasCtx);
     initDistrCanvas(state, hlaCanvasObjects[1], candidateScroll, distrCanvas, distrCanvasCtx);
+    // Allow HLA panel to be updated globally
     forgetOverviews = () => {
         hlaCanvasObjects[0]();
     }
+    // zoom buttons
+    document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
+    document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
+
+
+    slideInCards();
+    init = false;
+
+    endProcessing();
+}
+
+function uploadDummy()
+{
+    startProcessing();
+    candidateScroll = {
+        elements: [],
+        y: 0,
+        entryheight: 32,
+        active: false,
+        activeOffset: 0,
+        scrollbarWidth: 16,
+        selected: null,
+        draw2 : () => {}
+    }
+    designScroll = {
+        elements: [],
+        y: 0,
+        entryheight: 32,
+        active: false,
+        activeOffset: 0,
+        scrollbarWidth: 16,
+        selected: -1,
+        draw2 : () => {}
+    }
+
+    //let text = directInput.value;
+    //let kmers = processInputs([["Input", text]], 9, dummyFunc);
+    //let population = mockPopulation(100); // numbers, names
+    let state = makeGlobalState([],[0.5, 0.2, 0.2, 0.1],["A", "B", "C", "D"]);
+
+    initScrollCanvas(candidateCanvasCtx, candidateCanvas, candidateScroll);
+    initScrollCanvas(designCanvasCtx, designCanvas, designScroll);
+    initUtilityCanvas(state, utilityCanvas, utilityCanvasCtx);
+
+    const hlaCanvasObjects = initHLACanvas(state, overviewCanvas, overviewCanvasCtx);
+    initDistrCanvas(state, hlaCanvasObjects[1], candidateScroll, distrCanvas, distrCanvasCtx);
+    // Allow HLA panel to be updated globally
+    forgetOverviews = () => {
+        hlaCanvasObjects[0]();
+    }
+    // zoom buttons
+    document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
+    document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
 
     slideInCards();
     init = false;

@@ -28,7 +28,7 @@ function updateInfoCard(scrollObj)
         }
         if (sel.selfpeptide)
         {
-            infot += "Self peptide detected.<br\>";
+            infot += "Possible self peptide.<br\>";
             lines += 1;
         }
         for (let i = lines; i < 3; i++) infot += "<br\>";

@@ -86,7 +86,7 @@ function processInputs(inputs, n, scorefunc){
             sources: seqNames,
             sequon: hasSequon(key),
             redundant: null,
-            selfpeptide: false,
+            selfpeptide: scanForHuman(key),
         });
     }
     return output;

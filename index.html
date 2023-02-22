@@ -425,10 +425,57 @@
             left: 45vw;
             opacity: 0;
         }
+
+        .splash {
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            opacity: 1;
+            background-color: rgba(0,0,0,0.75);
+            position: fixed;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: opacity 0.5s;
+            transition-timing-function: ease-in-out;
+        }
+
+        .loadingbar {
+            pointer-events: none;
+            z-index: 15;
+            width: 80%;
+            height: 1vh;
+            margin-top: 1vh;
+            border-radius: 0.5vh;
+            overflow: hidden;
+            background-color: rgba(128,128,128,0.8);
+            align-items: center;
+        }
+
+        .loadingbarInner {
+            width : 50%;
+            height : 100%;
+            background-color: white;
+        }
+
+        .hiddenSplash {
+            opacity: 0;
+        }
     </style>
 </head>
 <!--<body style="margin: 0; padding: 0; overflow: overlay;" onload="initPage()">-->
 <body style="margin: 0; padding: 0;" onload="initPage()">
+    <div class="splash hiddenSplash">
+            <div>LOADING</div>
+            <div class="loadingbar">
+                <div class="loadingbarInner" id="loadingbar"></div>
+            </div>
+    </div>
     <div class="truebkg"></div>
     <div class="truebkg2 truebkg3" id="design2"></div>
     <div class="container" id="bigcontainer">
@@ -477,7 +524,7 @@
                 </p>
                 <h3>Submodularity enables efficient optimization</h3>
                 <p>
-                    We stipulate that a overall vaccine’s utility to an individual is a concave function of the sum of the utilities of its constituent peptides to that individual. This ensures that expected utility of a vaccine across a population is a submodular function of the peptides that are in that vaccine and allows for efficient optimization approaches.
+                    We stipulate that a overall vaccine's utility to an individual is a concave function of the sum of the utilities of its constituent peptides to that individual. This ensures that expected utility of a vaccine across a population is a submodular function of the peptides that are in that vaccine and allows for efficient optimization approaches.
                 </p>
             </div>
             <div class="item-headerfooter", style="padding: 2vw;">
@@ -489,10 +536,10 @@
                     <p>We have created a simplified implementation of our method that runs in the browser, which can be accessed below. To run, simply enter the desired sequence in the text area below and click "Make Class I MHC vaccine" or "Make Class II MHC vaccine" to design peptide vaccines. Candidate peptides will be generated and listed in order of decreasing utility, and adding the top candidate repeatedly will generate a vaccine with the performance guarantees given in our work. The utility function can also be adjusted, and it is also possible to select non-optimal peptides at each design stage. Hover over the titles of the panels for tooltips containing additional instructions.</p>
                     <p>The web implementation provides user interactivity and control, and is accessible to anyone with a modern browser. However, to allow our algorithm to run efficiently in the browser we have made the following concessions:</p>
                     <ul>
-                        <li>No filtering on the human proteome for self peptides is performed due to the size of the human proteome.</li>
+                        <li>False positives may occur when filtering on the human proteome for self peptides.</li>
                         <li>Predictions of peptide-MHC interactions are made with a logistic model as opposed to a neural network.</li>
                         <li>Only haplotypes are considered when looking at the distribution of population genotypes, as opposed to full diplotypes.</li>
-                        <li>Only peptides of a fixed size are considered.</li>
+                        <li>Only peptides of a fixed size are considered for each class of MHC.</li>
                     </ul>
                     <p>It is therefore recommended that a more rigorous implementation like the one found in our paper (<a href="https://github.com/gifford-lab/DiminishingReturns">see our github repository</a>) be used for critical applications. However, the web implementation can still be useful in quickly producing an initial draft or as a baseline to measure other designs against.</p>
                 </div>
@@ -534,13 +581,17 @@
             </div>
         </div>
         <div class="item-overview card flexcard offsetRight" id="card4">
-            <div class="preamble" title="Displays the overall expected utility of the design, as well as its expected utility for each genotype. Each bar represents a genotype, and the thickness of the bar is proportional to the frequency of the genotype in the global population. Genotypes are selectable, and the scroll wheel can be used to navigate the panel.">
+            <div class="preamble" title="Displays the overall expected utility of the design, as well as its expected utility for each genotype. Each bar represents a genotype, and the thickness of the bar is proportional to the frequency of the genotype in the global population. Genotypes are selectable, and the scroll wheel can be used to navigate the panel. The zoom buttons can also be used, and the mouse can be dragged to select an area for zooming.">
                 Expected utility of design
             </div>
             <div class="graph">
                 <div class="graphx">Expected utility</div>
                 <div class="graphy"><div class="ylabel">Genotypes</div></div>
                 <div class="graphf"><canvas id="overviewCanvas" width="512" height="512" class="overviewcanvas"></canvas></div>
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 10px; gap: 10px;">
+                <div class="divButton" id="zoominbutton">Zoom in</div>
+                <div class="divButton" id="zoomoutbutton">Zoom out</div>
             </div>
         </div>
         <div class="item-hlaview card flexcard offsetRight" id="card5">
@@ -570,6 +621,7 @@
             <p style="margin-top: 0; margin-left: 2vw; margin-right: 2vw;">Please cite "Z. Dai and D. Gifford. <em>Constrained Submodular Optimization for Vaccine Design</em>. 2022. <span style="font-variant: small-caps;">doi: 10.48550/ARXIV.2206.08336. url:</span> <a href="https://arxiv.org/abs/2206.08336" style="text-decoration: none;">https://arxiv.org/abs/2206.08336</a>."</p>
         </div>
     </div>
+    <script src="loadhumanproteome.js"></script>
     <script src="data.js"></script>
     <script src="loadmhcmodels.js"></script>
     <script src="processing.js"></script>
