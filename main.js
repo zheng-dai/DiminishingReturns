@@ -264,6 +264,11 @@ function uploadDirect(n, procfunc, getPopulation, lvparam, mhcload)
     );
 }
 
+var zoominfunc2 = () => {};
+var zoomoutfunc2 = () => {};
+function zoominfunc(){zoominfunc2()};
+function zoomoutfunc(){zoomoutfunc2()};
+
 function uploadInput(kmers, population)
 {
     startProcessing();
@@ -337,8 +342,10 @@ function uploadInput(kmers, population)
         hlaCanvasObjects[0]();
     }
     // zoom buttons
-    document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
-    document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
+    //document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
+    //document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
+    zoominfunc2 = hlaCanvasObjects[1].zoomIn;
+    zoomoutfunc2 = hlaCanvasObjects[1].zoomOut;
 
 
     slideInCards();
@@ -387,8 +394,10 @@ function uploadDummy()
         hlaCanvasObjects[0]();
     }
     // zoom buttons
-    document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
-    document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
+    //document.getElementById("zoominbutton").addEventListener("click", hlaCanvasObjects[1].zoomIn);
+    //document.getElementById("zoomoutbutton").addEventListener("click", hlaCanvasObjects[1].zoomOut);
+    zoominfunc2 = hlaCanvasObjects[1].zoomIn;
+    zoomoutfunc2 = hlaCanvasObjects[1].zoomOut;
 
     slideInCards();
     init = false;
